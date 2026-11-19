@@ -4,6 +4,8 @@ import * as Location from 'expo-location';
 
 export default function App() {
   const [permissao, setPermissao] = useState(false);
+const [localizacao, setLocalizacao] = useState(null);
+// Espere o satélite achar o celular (pode demorar segundos)
 
   useEffect(() => {
   const requererAcesso = async () => {
@@ -12,7 +14,11 @@ export default function App() {
     
     if (status === 'granted') {
       setPermissao(true);
-      console.log("Uhul! O usuário deixou rastrear!");
+// Espere o satélite achar o celular (pode demorar segundos)
+const posicaoNativa = await Location.getCurrentPositionAsync({});
+
+// Jogue esse emaranhado de dados matemáticos na nossa Memória limpa
+setLocalizacao(posicaoNativa);     
     } else {
       console.log("Fomos bloqueados. Game over.");
     }
@@ -28,6 +34,13 @@ export default function App() {
       ) : (
         <Text style={styles.errorText}>Acesso bloqueado. O app não funcionará.</Text>
       )}
+      {localizacao ? (
+    <Text style={{color: 'red'}}>
+        Lat: {localizacao.coords.latitude} | Lng: {localizacao.coords.longitude}
+    </Text>
+) : (
+    <Text>Procurando Satélites...</Text>
+)}
     </View>
   );
 }
@@ -39,4 +52,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
 });
